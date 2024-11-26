@@ -17,6 +17,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;;
       }
       form {
         margin: 20px 0;
@@ -70,10 +71,11 @@
       table {
         width: 100%;
         border-collapse: collapse;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
       }
 
       table thead {
-        background-color: #343a40;
+        background-color: #2a629b;
         color: white;
       }
 
@@ -101,7 +103,7 @@
       }
 
       .btn-edit {
-        background-color: #28a745;
+        background-color: #4f5250;
         color: white;
       }
 
@@ -110,7 +112,7 @@
       }
 
       .btn-delete {
-        background-color: #dc3545;
+        background-color: #0e0097;
         color: white;
       }
 
@@ -221,7 +223,7 @@
 
     <script>
 
-      let userId = "";
+      let id = "";
       document
         .getElementById("submitButton")
         .addEventListener("click", function () {
@@ -236,8 +238,8 @@
             phone: document.getElementById("phone").value,
           };
           console.log(customerDetails);
-          if(userId) {
-            customerDetails.uuid = userId
+          if(id) {
+            customerDetails.id = id
           }
           submitCustomerData(customerDetails);
         });
@@ -347,7 +349,7 @@
         document.getElementById("state").value = customersArr[index].state;
         document.getElementById("email").value = customersArr[index].email;
         document.getElementById("phone").value = customersArr[index].phone;
-        userUUID = customersArr[index].uuid;
+        id = customersArr[index].uuid;
       }
 
       

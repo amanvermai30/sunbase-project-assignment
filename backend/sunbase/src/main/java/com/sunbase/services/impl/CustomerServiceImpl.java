@@ -117,11 +117,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customerList.stream().map(customer -> modelMapper.map(customer,CustomerResponse.class)).toList();
     }
 
-
-    public List<CustomerResponse> saveOrUpdateInBulk(List<Customer> customers) {
-        return List.of();
-    }
-
     @Override
     public List<CustomerResponse> fetchDataFromServer() throws IOException {
         HttpHeaders headers = new HttpHeaders();
