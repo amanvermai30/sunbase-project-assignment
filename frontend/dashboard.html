@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add New Customer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      .dashboard-container {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      form {
+        margin: 20px 0;
+        max-width: 50em;
+      }
+      .form-group {
+        display: flex;
+        gap: 1em;
+        margin-bottom: 10px;
+      }
+      .form-group label {
+        flex: 1;
+        margin-right: 10px;
+        font-size: 14px;
+        font-weight: bold;
+      }
+      .form-group input {
+        flex: 2;
+        padding: 8px;
+        font-size: 14px;
+        width: 15em;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .form-group input:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .info {
+        font-size: 14px;
+        margin-top: 10px;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      table thead {
+        background-color: #343a40;
+        color: white;
+      }
+
+      table th,
+      table td {
+        padding: 10px;
+        text-align: left;
+        border: 1px solid #ddd;
+      }
+
+      table tbody tr:nth-child(odd) {
+        background-color: #f9f9f9;
+      }
+
+      table tbody tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      .btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      .btn-edit {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .btn-edit:hover {
+        background-color: #218838;
+      }
+
+      .btn-delete {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .btn-delete:hover {
+        background-color: #c82333;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: Arial, sans-serif;
+        margin: 10px 0;
+        gap: 10px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 14px;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      select,
+      input[type="text"] {
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+        width: 150px;
+      }
+
+      select:focus,
+      input[type="text"]:focus {
+        border-color: #007bff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-container" id="dashboard-container">
+      <h1>Add a New Customer</h1>
+
+      <form id="customerForm">
+        <div class="form-group">
+          <input type="text" id="firstName" placeholder="First name" required />
+          <input type="text" id="lastName" placeholder="Last name" required />
+        </div>
+        <div class="form-group">
+          <input type="text" id="street" placeholder="Street" required />
+          <input type="text" id="address" placeholder="Address" required />
+        </div>
+        <div class="form-group">
+          <input type="text" id="city" placeholder="City" required />
+          <input type="text" id="state" placeholder="State" required />
+        </div>
+        <div class="form-group">
+          <input type="email" id="email" placeholder="Email" required />
+          <input type="tel" id="phone" placeholder="Phone" required />
+        </div>
+        <button type="button" id="submitButton">Submit</button>
+      </form>
+    </div>
+
+    <h1>Customer Details</h1>
+    <div class="toolbar">
+      <div>
+        <button id="syncButton">Sync</button>
+        <button id="addCustomer" onclick="toggleVisibility()">
+          addCustomer
+        </button>
+      </div>
+      <div>
+        <select id="filterField">
+          <option value="firstName">First Name</option>
+          <option value="lastName">Last Name</option>
+          <option value="email">Email</option>
+        </select>
+        <input type="text" id="filterValue" placeholder="Enter value" />
+
+        <button id="searchButton">Search</button>
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Street</th>
+          <th>Address</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="customerTableBody">
+      </tbody>
+    </table>
+
+    <script>
+
+      let userId = "";
+      document
+        .getElementById("submitButton")
+        .addEventListener("click", function () {
+          const customerDetails = {
+            firstName: document.getElementById("firstName").value,
+            lastName: document.getElementById("lastName").value,
+            street: document.getElementById("street").value,
+            address: document.getElementById("address").value,
+            city: document.getElementById("city").value,
+            state: document.getElementById("state").value,
+            email: document.getElementById("email").value,
+            phone: document.getElementById("phone").value,
+          };
+          console.log(customerDetails);
+          if(userId) {
+            customerDetails.uuid = userId
+          }
+          submitCustomerData(customerDetails);
+        });
+
+      async function submitCustomerData(customerData) {
+        try {
+          const token = localStorage.getItem("token"); 
+
+          const response = await fetch(
+            "http://localhost:8080/customers/api/save",
+            {
+              method: "POST", 
+              headers: {
+                "Content-Type": "application/json", 
+                Authorization: `Bearer ${token}`, 
+              },
+              body: JSON.stringify(customerData), 
+            }
+          );
+
+          if (response.ok) {
+            alert("Customer data submitted successfully!");
+            fetchCustomers();
+            document.getElementById("firstName").value = "";
+            document.getElementById("lastName").value = "";
+            document.getElementById("street").value = "";
+            document.getElementById("address").value = "";
+            document.getElementById("city").value = "";
+            document.getElementById("state").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("phone").value = "";
+            
+          } else {
+            console.error("Failed to submit data:", response.status);
+            alert("Failed to submit customer data.");
+          }
+        } catch (error) {
+          console.error("Error submitting data:", error);
+          alert("An error occurred while submitting customer data.");
+        }
+      }
+
+     
+      let customersArr = [];
+
+      
+      async function fetchCustomers() {
+        try {
+          const token = localStorage.getItem("token"); 
+          const response = await fetch(
+            "http://localhost:8080/customers/api/getAll",
+            {
+              method: "GET", 
+              headers: {
+                Authorization: `Bearer ${token}`, 
+                "Content-Type": "application/json", 
+              },
+            }
+          );
+
+          if (response.ok) {
+            const customers = await response.json(); 
+            console.log(customers.payload);
+            customersArr = customers.payload;
+            loadTableData(customers.payload); 
+          } else {
+            console.error("Error: ", response.status);
+            alert("Failed to fetch customer data.");
+          }
+        } catch (error) {
+          console.error("Error fetching customer data:", error);
+          alert("Failed to fetch customer data.");
+        }
+      }
+
+      
+      function loadTableData(data) {
+        const tableBody = document.getElementById("customerTableBody");
+        tableBody.innerHTML = ""; 
+        data.forEach((customer, index) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+        <td>${customer.firstName}</td>
+        <td>${customer.lastName}</td>
+        <td>${customer.street}</td>
+        <td>${customer.address}</td>
+        <td>${customer.city}</td>
+        <td>${customer.state}</td>
+        <td>${customer.email}</td>
+        <td>${customer.phone}</td>
+        <td>
+          <button class="btn btn-edit" onclick="editCustomer(${index})">Edit</button>
+          <button class="btn btn-delete" onclick="deleteCustomer('${customer.uuid}')">Delete</button>
+        </td>
+      `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      function editCustomer(index) {
+        toggleVisibility();
+        document.getElementById("firstName").value = customersArr[index].firstName;
+        document.getElementById("lastName").value = customersArr[index].lastName;
+        document.getElementById("street").value = customersArr[index].street;
+        document.getElementById("address").value = customersArr[index].address;
+        document.getElementById("city").value = customersArr[index].city;
+        document.getElementById("state").value = customersArr[index].state;
+        document.getElementById("email").value = customersArr[index].email;
+        document.getElementById("phone").value = customersArr[index].phone;
+        userUUID = customersArr[index].uuid;
+      }
+
+      
+      async function deleteCustomer(uuid) {
+        
+        try {
+          const token = localStorage.getItem("token"); 
+          console.log(uuid, token);
+          
+          const response = await fetch(
+            `http://localhost:8080/customers/api/delete?uuid=${uuid}`,
+            {
+              method: "DELETE", 
+              headers: {
+                Authorization: `Bearer ${token}`, 
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            alert("Customer deleted successfully.");
+            fetchCustomers();
+          } else {
+            console.error("Failed to delete customer:", response.status);
+            alert("Failed to delete customer.");
+          }
+        } catch (error) {
+          console.error("Error deleting customer:", error);
+          alert("An error occurred while deleting the customer.");
+        }
+      }
+      
+      document
+        .getElementById("searchButton")
+        .addEventListener("click", function () {
+          const field = document.getElementById("filterField").value;
+          const value = document
+            .getElementById("filterValue")
+            .value.toLowerCase();
+          const filteredData = customers.filter((customer) =>
+            customer[field].toLowerCase().includes(value)
+          );
+          loadTableData(filteredData);
+        });
+
+      async function syncServerData() {
+        const url = "http://localhost:8080/customers/api/getAll/sunbase/server";
+        try {
+          const token = localStorage.getItem("token"); 
+
+          const response = await fetch(url, {
+            method: "GET", 
+            headers: {
+              "Content-Type": "application/json", 
+              Authorization: `Bearer ${token}`, 
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json(); 
+            alert("Data Sync successfully from server.")
+            console.log("Sync successful:", data);
+            fetchCustomers();
+          } else {
+            console.error("Failed to sync:", response.status);
+            alert("Failed to sync server data.");
+          }
+        } catch (error) {
+          console.error("Error during sync:", error);
+          alert("An error occurred during the sync process.");
+        }
+      }
+
+
+      document
+        .getElementById("syncButton")
+        .addEventListener("click", function () {
+          syncServerData(); // Call the API
+        });
+
+
+      window.onload = fetchCustomers;
+
+      function toggleVisibility() {
+        var div = document.getElementById("dashboard-container");
+
+        if (div.style.display === "none") {
+          div.style.display = "flex"; 
+        } else {
+          div.style.display = "none";
+        }
+      }
+    </script>
+  </body>
+</html>
